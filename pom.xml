@@ -21,13 +21,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>ai.platon.pulsar</groupId>
-    <artifactId>pulsar</artifactId>
-    <version>1.6.6</version>
+    <groupId>ai.platon</groupId>
+    <artifactId>platon</artifactId>
+    <version>3.7.0</version>
   </parent>
 
+  <groupId>ai.platon.pulsar</groupId>
   <artifactId>gora-shaded-mongodb</artifactId>
-  <version>0.8</version>
+  <version>0.9-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Pulsar Gora Shaded MongoDB</name>
@@ -35,6 +36,13 @@
     Since gora-0.x requires mongo-java-driver while spring-boot-2.4.x does not support it,
     we make a shaded jar to hide mongo-java-driver.
   </description>
+
+  <repositories>
+    <repository>
+      <id>Central</id>
+      <url>https://repo1.maven.org/maven2/</url>
+    </repository>
+  </repositories>
 
   <build>
     <plugins>
@@ -112,8 +120,30 @@
   </dependencies>
 
   <properties>
-    <!-- gora-0.8 use mongo-java-driver:3.5.0 by default -->
-    <!--    <mongo.driver.version>3.5.0</mongo.driver.version>-->
+    <!--  Gora Serialization  -->
+    <!--
+        Gora 0.8 supports:
+        Apache Avro 1.8.1
+        Apache Hadoop 2.5.2
+        Apache HBase 1.2.3
+        Apache Spark 1.4.1
+
+        Gora 0.9 supports:
+        Apache Avro 1.8.2
+        Apache Hadoop 2.5.2
+        Apache HBase 2.1.1
+        Apache Spark 2.2.1
+
+        See more at: http://gora.apache.org/
+      -->
+    <gora.version>0.9</gora.version>
+    <!-- Required by gora-0.8 -->
+    <avro.version>1.8.2</avro.version>
+    <!-- gora-0.9 use 2.5.2 by default, but 2.7.2 is a correct version -->
+    <hadoop.version>2.7.2</hadoop.version>
+
+    <!-- gora-0.9 use mongo-java-driver:3.5.0 by default -->
+    <!--  <mongo.driver.version>3.5.0</mongo.driver.version>-->
     <mongo.driver.version>3.12.8</mongo.driver.version>
   </properties>
 
