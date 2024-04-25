@@ -22,7 +22,7 @@
 
   <groupId>ai.platon.pulsar</groupId>
   <artifactId>gora-shaded-mongodb</artifactId>
-  <version>0.9-SNAPSHOT</version>
+  <version>0.9</version>
   <packaging>jar</packaging>
 
   <name>Pulsar Gora Shaded MongoDB</name>
@@ -31,6 +31,27 @@
     we make a shaded jar to hide mongo-java-driver.
   </description>
 
+  <url>http://platon.ai</url>
+  <inceptionYear>2014</inceptionYear>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+  <organization>
+    <name>The Platon Data Engine</name>
+    <url>http://platon.ai</url>
+  </organization>
+  <developers>
+    <developer>
+      <name>Vincent Zhang</name>
+      <email>ivincent.zhang@gmail.com</email>
+      <organization>platon.ai</organization>
+      <timezone>+8</timezone>
+    </developer>
+  </developers>
+
   <repositories>
     <repository>
       <id>Central</id>
@@ -38,8 +59,58 @@
     </repository>
   </repositories>
 
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+
   <build>
     <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${version.maven-compiler-plugin}</version>
+        <executions>
+          <!--  Replacing default-compile as it is treated specially by maven  -->
+          <execution>
+            <id>default-compile</id>
+            <phase>none</phase>
+          </execution>
+          <!--  Replacing default-testCompile as it is treated specially by maven  -->
+          <execution>
+            <id>default-testCompile</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <id>java-compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>java-test-compile</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <verbose>true</verbose>
+          <fork>true</fork>
+          <source>${javac.src.version}</source>
+          <target>${javac.target.version}</target>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -100,6 +171,59 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>platon-deploy</id>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-release-plugin</artifactId>
+            <version>3.0.0-M5</version>
+            <configuration>
+              <tagNameFormat>v${project.parent.version}</tagNameFormat>
+              <updateBranchVersions>false</updateBranchVersions>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>${version.maven-gpg-plugin}</version>
+            <configuration>
+              <gpgArguments>
+                <arg>--digest-algo=SHA512</arg>
+              </gpgArguments>
+            </configuration>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <!-- We want to sign the artifact, the POM, and all attached artifacts -->
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.6.7</version>
+            <configuration>
+              <serverId>ossrh</serverId>
+              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+              <autoReleaseAfterClose>true</autoReleaseAfterClose>
+            </configuration>
+            <extensions>true</extensions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <dependencies>
     <!-- shaded -->
@@ -209,6 +333,12 @@
 
   <properties>
     <version.maven-shade-plugin>3.4.1</version.maven-shade-plugin>
+    <version.maven-compiler-plugin>3.8.1</version.maven-compiler-plugin>
+    <version.maven-gpg-plugin>3.1.0</version.maven-gpg-plugin>
+
+    <!--  Java  -->
+    <javac.src.version>11</javac.src.version>
+    <javac.target.version>11</javac.target.version>
 
     <!--  Gora Serialization  -->
     <!--
