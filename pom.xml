@@ -22,7 +22,7 @@
 
   <groupId>ai.platon.pulsar</groupId>
   <artifactId>gora-shaded-mongodb</artifactId>
-  <version>0.9</version>
+  <version>0.9-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Pulsar Gora Shaded MongoDB</name>
@@ -51,6 +51,13 @@
       <timezone>+8</timezone>
     </developer>
   </developers>
+
+  <scm>
+    <connection>scm:git:https://github.com/platonai/gora-shaded-mongodb.git</connection>
+    <developerConnection>scm:git:https://github.com/platonai/gora-shaded-mongodb</developerConnection>
+    <url>https://github.com/platonai/gora-shaded-mongodb</url>
+    <tag>v0.9</tag>
+  </scm>
 
   <repositories>
     <repository>
@@ -109,6 +116,12 @@
           <source>${javac.src.version}</source>
           <target>${javac.target.version}</target>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>${version.maven-clean-plugin}</version>
       </plugin>
 
       <plugin>
@@ -187,7 +200,35 @@
               <updateBranchVersions>false</updateBranchVersions>
             </configuration>
           </plugin>
-
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>${version.maven-source-plugin}</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>${version.maven-javadoc-plugin}</version>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>javadoc</goal>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
@@ -219,6 +260,15 @@
               <autoReleaseAfterClose>true</autoReleaseAfterClose>
             </configuration>
             <extensions>true</extensions>
+            <executions>
+              <execution>
+                <id>default-deploy</id>
+                <phase>deploy</phase>
+                <goals>
+                  <goal>deploy</goal>
+                </goals>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>
@@ -334,6 +384,9 @@
   <properties>
     <version.maven-shade-plugin>3.4.1</version.maven-shade-plugin>
     <version.maven-compiler-plugin>3.8.1</version.maven-compiler-plugin>
+    <version.maven-clean-plugin>3.2.0</version.maven-clean-plugin>
+    <version.maven-source-plugin>3.3.0</version.maven-source-plugin>
+    <version.maven-javadoc-plugin>3.5.0</version.maven-javadoc-plugin>
     <version.maven-gpg-plugin>3.1.0</version.maven-gpg-plugin>
 
     <!--  Java  -->
