@@ -13,35 +13,6 @@ function printUsage {
 # Maven command and options
 $MvnCmd = Join-Path $AppHome '.\mvnw.cmd'
 
-# Initialize flags and additional arguments
-$PerformClean = $false
-$SkipTests = $true
-
-$AdditionalMvnArgs = @()
-
-# Parse command-line arguments
-foreach ($Arg in $args)
-{
-  switch ($Arg)
-  {
-    '-clean' {
-      $PerformClean = $true;
-    }
-    { '-t', '-test' } {
-      $SkipTests = $false;
-    }
-    { $_ -in "-h", "-help", "--help" } {
-      printUsage
-    }
-    { $_ -in "-*", "--*" } {
-      printUsage
-    }
-    Default {
-      $AdditionalMvnArgs += $Arg
-    }
-  }
-}
-
 Write-Host "Deploy the project ..."
 Write-Host "Changing version ..."
 
@@ -53,18 +24,7 @@ Get-ChildItem -Path "$AppHome" -Depth 2 -Filter 'pom.xml' -Recurse | ForEach-Obj
   (Get-Content $_.FullName) -replace $SNAPSHOT_VERSION, $VERSION | Set-Content $_.FullName
 }
 
-if ($PerformClean) {
-  & $MvnCmd clean -Pall-modules
-  if ($LastExitCode -ne 0) {
-    exit $LastExitCode
-  }
-}
-
-if ($SkipTests) {
-  & $MvnCmd deploy -Pplaton-release -Pplaton-deploy -DskipTests
-} else {
-  & $MvnCmd deploy -Pplaton-release -Pplaton-deploy
-}
+& $MvnCmd deploy -Pplaton-deploy
 
 $exitCode =$LastExitCode
 if ($exitCode -eq 0) {
