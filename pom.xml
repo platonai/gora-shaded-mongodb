@@ -22,7 +22,7 @@
 
   <groupId>ai.platon.pulsar</groupId>
   <artifactId>gora-shaded-mongodb</artifactId>
-  <version>0.9</version>
+  <version>0.9.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Pulsar Gora Shaded MongoDB</name>
@@ -122,7 +122,8 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <!--              <minimizeJar>true</minimizeJar>-->
+              <shadedArtifactAttached>true</shadedArtifactAttached>
+              <minimizeJar>true</minimizeJar>
               <filters>
                 <filter>
                   <artifact>*:*</artifact>
@@ -137,32 +138,38 @@
                   </excludes>
                 </filter>
               </filters>
-              <artifactSet>
-                <includes>
-                  <include>org.apache.gora:gora-core</include>
-                  <include>org.apache.gora:gora-mongodb</include>
-                  <include>com.mongodb:*</include>
-                  <include>org.mongodb:*</include>
-                  <include>org.bson:*</include>
-                  <include>org.jdom:*</include>
-                </includes>
-              </artifactSet>
               <relocations>
+                <relocation>
+                  <pattern>commons-collections</pattern>
+                  <shadedPattern>shaded.commons-collections</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>commons-lang</pattern>
+                  <shadedPattern>shaded.commons-lang</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>commons-codec</pattern>
+                  <shadedPattern>shaded.commons-codec</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.apache.flink</pattern>
+                  <shadedPattern>shaded.org.apache.flink</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.apache.spark</pattern>
+                  <shadedPattern>shaded.org.apache.spark</shadedPattern>
+                </relocation>
                 <relocation>
                   <pattern>org.mongodb</pattern>
                   <shadedPattern>shaded.org.mongodb</shadedPattern>
                 </relocation>
                 <relocation>
-                  <pattern>com.mongodb</pattern>
-                  <shadedPattern>shaded.com.mongodb</shadedPattern>
+                  <pattern>org.codehaus</pattern>
+                  <shadedPattern>shaded.org.codehaus</shadedPattern>
                 </relocation>
                 <relocation>
-                  <pattern>org.bson</pattern>
-                  <shadedPattern>shaded.org.bson</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>org.jdom</pattern>
-                  <shadedPattern>shaded.org.jdom</shadedPattern>
+                  <pattern>org.tukaani</pattern>
+                  <shadedPattern>shaded.org.tukaani</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>
@@ -279,31 +286,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.gora</groupId>
-      <artifactId>gora-compiler</artifactId>
-      <version>${gora.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.apache.avro</groupId>
       <artifactId>avro</artifactId>
       <version>${avro.version}</version>
-      <exclusions>
-        <!-- tika-parsers-1.25 requires commons-compress-1.20 -->
-        <exclusion>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-compress</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <!-- Required by gora -->
     <dependency>
@@ -323,11 +308,6 @@
       <artifactId>commons-collections</artifactId>
       <version>${commons-collections.version}</version>
       <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mongodb</groupId>
-      <artifactId>mongo-java-driver</artifactId>
-      <version>${mongo.driver.version}</version>
     </dependency>
   </dependencies>
 
