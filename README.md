@@ -1,2 +1,4 @@
-Since gora-0.x requires mongo-java-driver while spring-boot-2.4.x does not support it,
-we make a shaded jar to hide mongo-java-driver.
+README
+=
+
+The artifact is deprecated because Gora 0.9 now includes minimal dependencies.
