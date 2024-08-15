@@ -126,7 +126,7 @@
               <minimizeJar>true</minimizeJar>
               <filters>
                 <filter>
-                  <artifact>*:*</artifact>
+                  <artifact>org.apache:*</artifact>
                   <excludes>
                     <exclude>META-INF/license/**</exclude>
                     <exclude>META-INF/*</exclude>
@@ -138,44 +138,30 @@
                   </excludes>
                 </filter>
               </filters>
-              <relocations>
-                <relocation>
-                  <pattern>commons-collections</pattern>
-                  <shadedPattern>shaded.commons-collections</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>commons-lang</pattern>
-                  <shadedPattern>shaded.commons-lang</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>commons-codec</pattern>
-                  <shadedPattern>shaded.commons-codec</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>org.apache.flink</pattern>
-                  <shadedPattern>shaded.org.apache.flink</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>org.apache.spark</pattern>
-                  <shadedPattern>shaded.org.apache.spark</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>org.mongodb</pattern>
-                  <shadedPattern>shaded.org.mongodb</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>org.codehaus</pattern>
-                  <shadedPattern>shaded.org.codehaus</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>org.tukaani</pattern>
-                  <shadedPattern>shaded.org.tukaani</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>org.slf4j</pattern>
-                  <shadedPattern>shaded.org.slf4j</shadedPattern>
-                </relocation>
-              </relocations>
+              <artifactSet>
+                <includes>
+                  <include>org.apache.gora:gora-core</include>
+                  <include>org.apache.gora:gora-mongodb</include>
+                  <include>com.mongodb:*</include>
+                  <include>org.mongodb:*</include>
+                  <include>org.bson:*</include>
+                  <include>org.jdom:*</include>
+                </includes>
+              </artifactSet>
+<!--              <relocations>-->
+<!--                <relocation>-->
+<!--                  <pattern>org.mongodb</pattern>-->
+<!--                  <shadedPattern>shaded.org.mongodb</shadedPattern>-->
+<!--                </relocation>-->
+<!--                <relocation>-->
+<!--                  <pattern>com.mongodb</pattern>-->
+<!--                  <shadedPattern>shaded.com.mongodb</shadedPattern>-->
+<!--                </relocation>-->
+<!--                <relocation>-->
+<!--                  <pattern>org.bson</pattern>-->
+<!--                  <shadedPattern>shaded.org.bson</shadedPattern>-->
+<!--                </relocation>-->
+<!--              </relocations>-->
             </configuration>
           </execution>
         </executions>
@@ -223,7 +209,7 @@
           <plugin>
             <groupId>org.sonatype.plugins</groupId>
             <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>1.7.0</version>
+            <version>1.6.7</version>
             <configuration>
               <serverId>ossrh</serverId>
               <nexusUrl>https://oss.sonatype.org/</nexusUrl>
@@ -242,22 +228,79 @@
       <groupId>org.mongodb</groupId>
       <artifactId>mongo-java-driver</artifactId>
       <version>${mongo.driver.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>log4j</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.gora</groupId>
       <artifactId>gora-mongodb</artifactId>
       <version>${gora.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>log4j</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.gora</groupId>
       <artifactId>gora-core</artifactId>
-        <version>${gora.version}</version>
+      <version>${gora.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>log4j</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <!-- Conflict with tomcat: use javax.servlet:javax.servlet-api:3.1.0 instead -->
+        <exclusion>
+          <groupId>org.mortbay.jetty</groupId>
+          <artifactId>servlet-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.gora</groupId>
+      <artifactId>gora-compiler</artifactId>
+      <version>${gora.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>log4j</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
     <dependency>
       <groupId>org.apache.avro</groupId>
       <artifactId>avro</artifactId>
       <version>${avro.version}</version>
+      <exclusions>
+        <!-- tika-parsers-1.25 requires commons-compress-1.20 -->
+        <exclusion>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-compress</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- Required by gora -->
     <dependency>
@@ -278,6 +321,7 @@
       <version>${commons-collections.version}</version>
       <scope>runtime</scope>
     </dependency>
+
   </dependencies>
 
   <properties>
